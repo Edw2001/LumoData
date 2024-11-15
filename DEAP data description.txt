@@ -1,0 +1,50 @@
+DEAP数据集结构：
+EEG（脑电图）信号：32个通道的高分辨率脑电数据。
+外周生理信号：如心电图（ECG）、皮肤电反应（GSR）、眼电图（EOG）、肌电图（EMG）、体温和呼吸频率等。
+
+每位参与者观看40个一分钟的视频片段，这些视频旨在诱发特定的情感反应。之后，参与者根据情绪维度（如唤醒度、效价、喜好度和主导度）对每个视频进行自我评估。
+
+
+data_original: 未经清洗的数据
+EEG信号：32个通道的原始脑电图数据，采样率为512 Hz。
+
+
+data_preprocessed_python:
+降采样：将采样率从512 Hz降至128 Hz，减少数据量。
+滤波：对EEG信号进行带通滤波（4.0–45.0 Hz），去除噪声和伪迹。
+每个.dat的数据格式为 (40, 40, 8064) 一共有32个participants 所以有32个.dat的数据
+其中40代表观看的40个视频， EEG的32个信号+8个外周生理信号（EMG, EOG, ECG, Respiration Belt, GSR, BVP, Temperature, Plethysmograph）
+其中GPT说BVP(也称PPG) 是血容量脉搏可以来计算心率和HRV， paper里面写有提到用Pleth（皮肤电位）来计算
+
+8064 代表是 63 * 128
+首先我们采样率降到128， 63代表的是3秒（基线数据） + 60秒（视频观看数据）
+基线数据也就是 在视频开始前 participant会被要求放松保持静止，然后记录基线生理信号。
+
+ 
+metadata: 
+
+online_ratings: 针对于心情的评分维度
+
+Arousal(唤醒度)
+Valence(较价)
+Dominance（主导度）
+Liking（喜好度）
+这些数据不是participant而是线上的在线评分，提供了视频的基线情感评价，用于比较和校准参与者的主管评分
+
+participant_questionaire:
+参与者本身的问卷类似 比如喝不喝酒之类的
+
+participant_ratings: 
+也就是针对于每个participant 看视频的情感评分
+是一个float的scale好像是1-9
+Arousal(唤醒度) - 激动程度
+Valence(较价) - 愉快程度
+Dominance（主导度） - 控制感
+Liking（喜好度） - 对视频的喜爱程度
+Familiarity(熟悉度) - 是否熟悉该视频
+
+video_list：
+视频列表：包含了实验中使用的40个视频片段的信息。
+
+fave_video:
+面部的咱不用管
